@@ -1,6 +1,5 @@
 import math
-import sys
-
+from console_variables_getters import get_int_value
 
 # pobieranie danych
 def get_float_value(index, t_value):
@@ -15,18 +14,9 @@ def get_float_value(index, t_value):
             print("Podałeś niewłaściwą wartość, wpisz ją ponownie.")
 
 
-def get_int_value(index):
-    while True:
-        try:
-            x = int(input("Podaj wartość " + index + " [MPa] = "))
-            return x
-        except ValueError:
-            print("Podałeś niewłaściwą wartość, wpisz ją ponownie.")
-
-
 def section_force():
     while True:
-        x = input("Przekrój ściskany czy zginany? [wpisz s/z]: ")
+        x = input("Przekrój ściskany czy zginany? [wpisz s/z]: ").lower()
         if x == "z" or x == "s":
             return x
         print("Podałeś niewłaściwą literę. Wpisz z jeśli przekrój jest zginany, wpisz s jeśli przekrój jest ściskany.")
@@ -43,24 +33,26 @@ def class_of_section(b, E, y1, y2, y3):
         return 4
 
 
+def test_two_variables(c, t, fy):
+    b = c/t
+    E = math.sqrt((235/fy))
+    return b, E
+
+
 print("Wprowadź poniższe dane aby wyliczyć klasę elementu. W zapisie dziesiętnym użyj kropki.")
 t = get_float_value("t", None)
 c = get_float_value("c", t)
-fy = get_int_value("fy")
+fy = get_int_value("Podaj wytrzymałość stali [MPa] fy = ")
 a = section_force()
 
 # policzenie c/t oraz epsilon
-b = c/t
-E = math.sqrt((235/fy))
+b, E = test_two_variables(c, t, fy)
 
 # sprawdzenie warunków
 if a == "z":
     k = class_of_section(b, E, 72, 83, 124)
-elif a == "s":
-    k = class_of_section(b, E, 33, 38, 42)
 else:
-    print("Wprowadziłeś niepoprawną zmienną - uruchom ponownie program i wybierz s lub z")
-    sys.exit(0)
+    k = class_of_section(b, E, 33, 38, 42)
 
 # klasa przekroju
 print("Klasa wprowadzonego przekroju: ", k)
